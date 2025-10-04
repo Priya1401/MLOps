@@ -28,13 +28,16 @@ mlops_labs
     ├── assets/
     ├── fastapi_lab1_env/
     ├── model/
-    │   └── iris_model.pkl
+    │   ├── iris_model.pkl
+    │   └── wine_model.pkl
     ├── src/
     │   ├── __init__.py
     │   ├── data.py
     │   ├── main.py
     │   ├── predict.py
-    │   └── train.py
+    │   ├── predict_wine.py    
+    │   ├── train.py
+    │   └── train_wine.py
     ├── README.md
     └── requirements.txt
 ```
@@ -51,14 +54,15 @@ Note:
 2. To train the Decision Tree Classifier, run:
     ```bash
     python train.py
+    python train_wine.py
     ```
-3. To serve the trained model as an API, run:
+3. To serve the trained models as an API, run:
     ```bash
-    uvicorn app:main --reload
+    uvicorn main:app --reload
     ```
 4. Testing endpoints - to view the documentation of your api model you can use [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (or) [http://localhost:8000/docs](http://localhost:8000/docs) after you run you run your FastAPI app.
     
-![API page](assets/docs.png)
+![API page](assets/docs_2.png)
    
 You can also test out the results of your endpoints by interacting with them. Click on the dropdown button of your endpoint -> Try it out -> Fill the Request body -> Click on Execute button.
 
@@ -92,9 +96,9 @@ You can also test out the results of your endpoints by interacting with them. Cl
 ```python
 class IrisData(BaseModel):
     petal_length: float
-    sepal_length:float
-    petal_width:float
-    sepal_width:float
+    sepal_length: float
+    petal_width: float
+    sepal_width: float
 ```
 
 The **IrisData** class is a [Pydantic model](https://docs.pydantic.dev/latest/concepts/models/) which defines the expected structure of the data for a request body. When you use it as a type annotation for a route operation parameter, FastAPI will perform the following actions:
@@ -106,7 +110,7 @@ The **IrisData** class is a [Pydantic model](https://docs.pydantic.dev/latest/co
 
 ```python
 class IrisResponse(BaseModel):
-    response:int
+    response: int
 ```
 
 The **IrisResponse** class is another Pydantic model that defines the structure of the response data for an endpoint. When you specify **response_model=IrisResponse** in a route operation, it tells FastAPI to:
@@ -114,6 +118,41 @@ The **IrisResponse** class is another Pydantic model that defines the structure 
 - **Document the API**: Include the IrisResponse model in the generated API documentation, so API consumers know what to expect in the response.
 
 ---
+
+#### 3. WineData class
+
+```python
+class WineData(BaseModel):
+    alcohol: float
+    malic_acid: float
+    ash: float
+    alcalinity_of_ash: float
+    magnesium: float
+    total_phenols: float
+    flavanoids: float
+    nonflavanoid_phenols: float
+    proanthocyanins: float
+    color_intensity: float
+    hue: float
+    od280_od315_of_diluted_wines: float
+    proline: float
+```
+
+The **WineData** class is a [Pydantic model](https://docs.pydantic.dev/latest/concepts/models/) defining the expected input structure for the Wine dataset. Each field represents a feature of the wine sample used in classification. FastAPI will:
+- **Parse and Validate:** Ensure all numeric inputs are correctly provided.
+- **Convert Types:** Automatically cast compatible types.
+- **Handle Errors:** Return a 422 error for invalid or missing fields.
+
+#### 4. WineResponse class
+
+```python
+class WineResponse(BaseModel):
+    response: int
+```
+
+The **WineResponse** class defines the response model for the Wine classification endpoint. When you specify **response_model=WineResponse**, FastAPI will:
+- **Serialize Output:** Format the model’s output into structured JSON.
+- **Document Automatically:** Display the response schema clearly in OpenAPI docs, helping users understand the response structure.
 
 ### FastAPI features
 
