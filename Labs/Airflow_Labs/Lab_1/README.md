@@ -6,7 +6,6 @@
 ### ML Model
 
 This script is designed for data clustering using K-Means clustering and determining the optimal number of clusters using the elbow method. It provides functionality to load data from a CSV file, perform data preprocessing, build and save a K-Means clustering model, and determine the number of clusters based on the elbow method.
-
 #### Prerequisites
 
 Before using this script, make sure you have the following libraries installed:
@@ -336,3 +335,53 @@ app-airflow-webserver-1 | 127.0.0.1 - - [17/Feb/2023:09:34:29 +0000] "GET /healt
 #### Step 6: Pipeline Outputs
 
 - Once the DAG completes its execution, check any output or artifacts produced by your functions and tasks. 
+
+
+
+---
+
+## Additional Lab – Iris Dataset Classification Workflow
+
+### Overview
+An additional machine learning workflow has been added using the **Iris dataset** to demonstrate classification with **Logistic Regression**.  
+This workflow is implemented in the files `lab_iris.py` and `airflow_iris.py`.
+
+### Files
+- **lab_iris.py** – Contains dataset loading, preprocessing, model training, and testing functions.  
+- **airflow_iris.py** – Defines the Airflow DAG that orchestrates the end-to-end Iris workflow.
+
+### Functions in `lab_iris.py`
+
+1. **load_data()**
+   - Loads the built-in Iris dataset from scikit-learn and serializes it.  
+
+2. **preprocess_data(data)**
+   - Splits the data into training and testing sets and applies standard scaling.  
+
+3. **train_model(data)**
+   - Trains a Logistic Regression classifier and saves the model as `iris_model.pkl`.  
+
+4. **test_model(data)**
+   - Loads the saved model and evaluates accuracy on the test set.  
+
+### Example Usage
+```python
+data = load_data()
+processed = preprocess_data(data)
+trained = train_model(processed)
+accuracy = test_model(trained)
+print(f"Model Accuracy: {accuracy}")
+```
+
+### Airflow DAG (`airflow_iris.py`)
+This DAG automates the end-to-end Iris ML workflow in Airflow.  
+
+- **DAG Name:** Airflow_Iris  
+- **Tasks:**
+  1. Load Data  
+  2. Preprocess Data  
+  3. Train Model  
+  4. Test Model  
+
+Each task passes serialized (pickled) data to the next via XCom.  
+When triggered, the DAG prints model accuracy in the Airflow task logs and saves the trained model inside the `model` directory as `iris_model.pkl`.
