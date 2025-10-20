@@ -22,11 +22,11 @@ on:
 
 permissions:
   contents: read
-  packages: write  # needed to push to GHCR
+  packages: write
 
 env:
-  LAB_DIR: Github_Labs/LabAssignment
-  IMAGE_NAME: lab4-smart
+  LAB_DIR: Github_Labs/LabAssignment      # <-- your folder name
+  IMAGE_NAME: labassignment-smart
   PY_VERSION: "3.10"
   ACCURACY_THRESHOLD: "0.90"
 
