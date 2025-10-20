@@ -25,7 +25,7 @@ permissions:
   packages: write  # needed to push to GHCR
 
 env:
-  LAB_DIR: Github_Labs/Lab4
+  LAB_DIR: Github_Labs/LabAssignment
   IMAGE_NAME: lab4-smart
   PY_VERSION: "3.10"
   ACCURACY_THRESHOLD: "0.90"
