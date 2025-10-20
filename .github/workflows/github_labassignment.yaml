@@ -25,7 +25,7 @@ permissions:
   packages: write
 
 env:
-  LAB_DIR: MLOps/Labs/Github_Labs/LabAssignment   # ✅ fixed full path
+  LAB_DIR: Labs/Github_Labs/LabAssignment
   IMAGE_NAME: labassignment-smart
   PY_VERSION: "3.10"
   ACCURACY_THRESHOLD: "0.90"
