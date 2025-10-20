@@ -1,0 +1,91 @@
+name: Lab Assignment - Smart CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      preview_only:
+        description: "Run training but skip Docker push (true/false)"
+        required: false
+        default: "false"
+      force_retrain:
+        description: "Force retraining regardless of checksum (true/false)"
+        required: false
+        default: "false"
+      data_salt:
+        description: "Optional salt to simulate data change"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write  # needed to push to GHCR
+
+env:
+  LAB_DIR: Github_Labs/Lab4
+  IMAGE_NAME: lab4-smart
+  PY_VERSION: "3.10"
+  ACCURACY_THRESHOLD: "0.90"
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ${{ env.LAB_DIR }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        working-directory: ${{ env.LAB_DIR }}
+        run: pytest -q
+
+      - name: Train + Evaluate (checksum + accuracy gate)
+        working-directory: ${{ env.LAB_DIR }}
+        env:
+          FORCE_RETRAIN: ${{ inputs.force_retrain }}
+          DATA_SALT: ${{ inputs.data_salt }}
+          ACCURACY_THRESHOLD: ${{ env.ACCURACY_THRESHOLD }}
+        run: python src/train_and_evaluate.py
+
+      - name: Upload model artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            ${{ env.LAB_DIR }}/models/
+            ${{ env.LAB_DIR }}/metrics.json
+
+      - name: Build Docker image
+        if: success()
+        working-directory: ${{ env.LAB_DIR }}
+        run: docker build -t ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} .
+
+      - name: Log in to GHCR
+        if: success() && inputs.preview_only != 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image
+        if: success() && inputs.preview_only != 'true'
+        run: |
+          docker push ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          docker tag ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
+          docker push ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
