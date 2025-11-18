@@ -1,0 +1,8 @@
+numpy==1.26.4
+mlflow
+scikit-learn
+fastapi
+uvicorn
+xgboost
+pandas
+pyarrow==14.0.2
