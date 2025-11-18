@@ -70,7 +70,7 @@ A centralized configuration file for the entire lab.
   
 ---
 
-### ⚙️ **How to Run**
+### **How to Run**
 
 #### Step 1: Setup environment
 
