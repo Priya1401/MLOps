@@ -166,8 +166,7 @@ Logging is integrated for:
 
 ## 4. Environment Setup
 
-> **Important:** This project assumes Python 3.10 in a virtual environment.  
-> (MLflow and some ML libraries are not fully compatible with Python 3.12 yet.)
+> **Important:** This project uses Python 3.10 in a virtual environment.  
 
 From the **MLOps_Github** root:
 
@@ -223,6 +222,8 @@ Each execution creates a new model version in the registry.
 ---
 
 ## 6. Using the MLflow UI & Setting Models to Production
+
+<img width="791" height="540" alt="image" src="https://github.com/user-attachments/assets/2f130bb3-0eed-4f02-a786-86c16f8b0fdd" />
 
 Start the MLflow UI:
 
